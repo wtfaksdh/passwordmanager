@@ -1,4 +1,7 @@
-aiogram==3.0.1
+aiogram>=3.1.0,<3.25
 python-dotenv
 dependency-injector
-pydantic<2.12
+pydantic>=2.4,<2.13
+cryptography
+aiohttp~=3.8.6
+aiofiles~=23.1.0
