@@ -1,3 +1,8 @@
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[3]))
+
 import asyncio
 from aiogram import Bot, Dispatcher
 from dotenv import load_dotenv
@@ -24,3 +29,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
