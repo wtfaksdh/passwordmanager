@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parents[3]))
+sys.path.append(str(Path(__file__).resolve().parents[2]))  # добавляем src
 
 import asyncio
 from aiogram import Bot, Dispatcher
@@ -29,4 +29,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
