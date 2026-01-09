@@ -1,17 +1,25 @@
 import asyncio
 from aiogram import Bot, Dispatcher
-from infrastructure.entrypoints.telegram.handlers import router
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+from infrastructure.entrypoints.telegram.handlers import router
+from infrastructure.entrypoints.telegram.middlewares import AuthMiddleware
+from bootstrap.wiring import container
 
+load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 async def main():
     bot = Bot(token=BOT_TOKEN)
     dp = Dispatcher()
+    
     dp.include_router(router)
+    dp.update.middleware(AuthMiddleware())
+
+    # Подключаем DI
+    container.wire(modules=[router, AuthMiddleware])
+
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
