@@ -3,7 +3,8 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.exceptions import InvalidTag
 
 # Импорт интерфейса EncryptionService (предполагается, что он определен в слое core)
-from infrastructure import EncryptionService
+from core.ports.encryption import EncryptionService
+
 
 class AESGCMService(EncryptionService):
     """
