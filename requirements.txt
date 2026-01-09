@@ -1,3 +1,4 @@
-aiogram==3.1.0
+aiogram==3.0.1
 python-dotenv
 dependency-injector
+pydantic<2.12
