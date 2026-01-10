@@ -14,8 +14,10 @@ from src.bot.keyboards import (
     get_passwords_inline_keyboard,
 )
 from src.database.db import Database
-from src.database.crud import UserCRUD, PasswordCRUD
-from src.database.models import Password
+from src.database.crud import UserRepository, PasswordRepository
+from src.database.models import Password, User
+from src.security.encryption import EncryptionService
+from config import DB_PATH
 
 router = Router()
 
@@ -51,9 +53,9 @@ async def register_username(message: Message, state: FSMContext):
         await message.answer("Имя пользователя должно содержать минимум 3 символа.")
         return
 
-    db = Database()
+    db = Database(DB_PATH)
     db.connect()
-    user = UserCRUD.get_by_username(db, username)
+    user = UserRepository.get_by_username(db, username)
     db.disconnect()
 
     if user:
@@ -77,12 +79,12 @@ async def register_password(message: Message, state: FSMContext):
     data = await state.get_data()
     username = data.get("username")
 
-    from src.database.models import User
-
-    user = User(username=username, password=password)
-    db = Database()
+    # Encrypt the password
+    encrypted_password = EncryptionService.encrypt_password(password, password)
+    user = User(username=username, password_hash=encrypted_password)
+    db = Database(DB_PATH)
     db.connect()
-    user_id = UserCRUD.create(db, user)
+    user_id = UserRepository.create(db, user)
     db.disconnect()
 
     if user_id:
@@ -117,13 +119,23 @@ async def login_password(message: Message, state: FSMContext):
     data = await state.get_data()
     username = data.get("username")
 
-    db = Database()
+    db = Database(DB_PATH)
     db.connect()
-    user = UserCRUD.verify_password(db, username, password)
+    user = UserRepository.get_by_username(db, username)
     db.disconnect()
-
+    
+    # Verify password
+    user_found = None
     if user:
-        user_sessions[message.from_user.id] = user.id
+        try:
+            decrypted = EncryptionService.decrypt_password(user.password_hash, password)
+            if decrypted == password:
+                user_found = user
+        except:
+            user_found = None
+    
+    if user_found:
+        user_sessions[message.from_user.id] = user_found.id
         await message.answer(LOGIN_SUCCESS, reply_markup=get_main_menu_keyboard())
         await state.set_state(MainMenuStates.MENU)
     else:
@@ -180,16 +192,29 @@ async def save_password(message: Message, state: FSMContext):
         await state.set_state(AuthStates.START)
         return
 
+    # Get user's master password hash for encryption
+    db = Database(DB_PATH)
+    db.connect()
+    user = UserRepository.get_by_id(db, user_id)
+    db.disconnect()
+    
+    if not user:
+        await message.answer("Ошибка: аккаунт не найден.")
+        await state.set_state(AuthStates.START)
+        return
+    
+    # Encrypt password with salt from user's password hash
+    encrypted_pwd = EncryptionService.encrypt_password(password, user.password_hash.split(':')[0])
     pwd_obj = Password(
         user_id=user_id,
         service=data.get("service"),
         login=data.get("login"),
-        password=password,
+        password=encrypted_pwd,
     )
 
-    db = Database()
+    db = Database(DB_PATH)
     db.connect()
-    pwd_id = PasswordCRUD.create(db, pwd_obj)
+    pwd_id = PasswordRepository.create(db, pwd_obj)
     db.disconnect()
 
     if pwd_id:
@@ -213,9 +238,10 @@ async def view_passwords(message: Message, state: FSMContext):
         await state.set_state(AuthStates.START)
         return
 
-    db = Database()
+    db = Database(DB_PATH)
     db.connect()
-    passwords = PasswordCRUD.get_by_user_id(db, user_id)
+    passwords = PasswordRepository.get_by_user(db, user_id)
+    user = UserRepository.get_by_id(db, user_id)
     db.disconnect()
 
     if not passwords:
@@ -228,9 +254,13 @@ async def view_passwords(message: Message, state: FSMContext):
 
     response = "📝 Ваши пароли:\n\n"
     for pwd in passwords:
+        try:
+            decrypted_pwd = EncryptionService.decrypt_password(pwd.password, user.password_hash.split(':')[0])
+        except:
+            decrypted_pwd = "[Не удалось расшифровать]"
         response += f"🔹 <b>{pwd.service}</b>\n"
         response += f"   Логин: <code>{pwd.login}</code>\n"
-        response += f"   Пароль: <code>{pwd.password}</code>\n\n"
+        response += f"   Пароль: <code>{decrypted_pwd}</code>\n\n"
 
     await message.answer(response, reply_markup=get_main_menu_keyboard(), parse_mode="HTML")
     await state.set_state(MainMenuStates.MENU)
@@ -246,9 +276,9 @@ async def delete_password_menu(message: Message, state: FSMContext):
         await state.set_state(AuthStates.START)
         return
 
-    db = Database()
+    db = Database(DB_PATH)
     db.connect()
-    passwords = PasswordCRUD.get_by_user_id(db, user_id)
+    passwords = PasswordRepository.get_by_user(db, user_id)
     db.disconnect()
 
     if not passwords:
@@ -275,9 +305,9 @@ async def delete_password_confirm(callback: CallbackQuery, state: FSMContext):
     pwd_id = int(callback.data.split("_")[1])
     await state.update_data(password_id=pwd_id)
 
-    db = Database()
+    db = Database(DB_PATH)
     db.connect()
-    pwd = PasswordCRUD.get_by_id(db, pwd_id)
+    pwd = PasswordRepository.get_by_id(db, pwd_id)
     db.disconnect()
 
     if pwd:
@@ -301,9 +331,9 @@ async def delete_password_execute(message: Message, state: FSMContext):
     pwd_id = data.get("password_id")
 
     if pwd_id:
-        db = Database()
+        db = Database(DB_PATH)
         db.connect()
-        success = PasswordCRUD.delete(db, pwd_id)
+        success = PasswordRepository.delete(db, pwd_id)
         db.disconnect()
 
         if success:
@@ -330,9 +360,9 @@ async def update_password_menu(message: Message, state: FSMContext):
         await state.set_state(AuthStates.START)
         return
 
-    db = Database()
+    db = Database(DB_PATH)
     db.connect()
-    passwords = PasswordCRUD.get_by_user_id(db, user_id)
+    passwords = PasswordRepository.get_by_user(db, user_id)
     db.disconnect()
 
     if not passwords:
@@ -359,9 +389,9 @@ async def update_password_select(callback: CallbackQuery, state: FSMContext):
     pwd_id = int(callback.data.split("_")[1])
     await state.update_data(password_id=pwd_id)
 
-    db = Database()
+    db = Database(DB_PATH)
     db.connect()
-    pwd = PasswordCRUD.get_by_id(db, pwd_id)
+    pwd = PasswordRepository.get_by_id(db, pwd_id)
     db.disconnect()
 
     if pwd:
@@ -457,9 +487,21 @@ async def update_password_login(message: Message, state: FSMContext):
         await state.set_state(MainMenuStates.MENU)
         return
 
-    db = Database()
+    db = Database(DB_PATH)
     db.connect()
-    success = PasswordCRUD.update(db, pwd_id, login=new_login)
+    pwd = PasswordRepository.get_by_id(db, pwd_id)
+    db.disconnect()
+    
+    if not pwd:
+        await message.answer("Ошибка: пароль не найден.", reply_markup=get_main_menu_keyboard())
+        await state.set_state(MainMenuStates.MENU)
+        return
+    
+    # Create updated password object
+    pwd.login = new_login
+    db = Database(DB_PATH)
+    db.connect()
+    success = PasswordRepository.update(db, pwd)
     db.disconnect()
 
     if success:
@@ -482,9 +524,23 @@ async def update_password_password(message: Message, state: FSMContext):
         await state.set_state(MainMenuStates.MENU)
         return
 
-    db = Database()
+    db = Database(DB_PATH)
     db.connect()
-    success = PasswordCRUD.update(db, pwd_id, password=new_password)
+    pwd = PasswordRepository.get_by_id(db, pwd_id)
+    user = UserRepository.get_by_id(db, pwd.user_id)
+    db.disconnect()
+    
+    if not pwd or not user:
+        await message.answer("Ошибка: пароль или пользователь не найден.", reply_markup=get_main_menu_keyboard())
+        await state.set_state(MainMenuStates.MENU)
+        return
+    
+    # Encrypt and update password
+    encrypted_pwd = EncryptionService.encrypt_password(new_password, user.password_hash.split(':')[0])
+    pwd.password = encrypted_pwd
+    db = Database(DB_PATH)
+    db.connect()
+    success = PasswordRepository.update(db, pwd)
     db.disconnect()
 
     if success:

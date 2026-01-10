@@ -52,6 +52,12 @@ async def register_start(message: Message, state: FSMContext):
 @router.message(AuthStates.REGISTER_USERNAME)
 async def register_username(message: Message, state: FSMContext):
     """Handle username input during registration"""
+    # Check for cancel button
+    if message.text == BTN_CANCEL:
+        await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
+        await state.set_state(AuthStates.START)
+        return
+    
     username = message.text.strip()
     
     # Validate username
@@ -85,6 +91,13 @@ async def register_username(message: Message, state: FSMContext):
 @router.message(AuthStates.REGISTER_PASSWORD)
 async def register_password(message: Message, state: FSMContext):
     """Handle password input during registration"""
+    # Check for cancel button
+    if message.text == BTN_CANCEL:
+        await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
+        await state.clear()
+        await state.set_state(AuthStates.START)
+        return
+    
     password = message.text.strip()
     
     # Validate password
@@ -137,6 +150,12 @@ async def login_start(message: Message, state: FSMContext):
 @router.message(AuthStates.LOGIN_USERNAME)
 async def login_username(message: Message, state: FSMContext):
     """Handle username input during login"""
+    # Check for cancel button
+    if message.text == BTN_CANCEL:
+        await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
+        await state.set_state(AuthStates.START)
+        return
+    
     username = message.text.strip()
     
     await state.update_data(username=username)
@@ -150,6 +169,13 @@ async def login_username(message: Message, state: FSMContext):
 @router.message(AuthStates.LOGIN_PASSWORD)
 async def login_password(message: Message, state: FSMContext):
     """Handle password input during login"""
+    # Check for cancel button
+    if message.text == BTN_CANCEL:
+        await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
+        await state.clear()
+        await state.set_state(AuthStates.START)
+        return
+    
     password = message.text.strip()
     
     # Get username from state

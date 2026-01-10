@@ -24,6 +24,7 @@ class MainMenuStates(StatesGroup):
     DELETE_PASSWORD = State()
     UPDATE_PASSWORD = State()
     UPDATE_PASSWORD_ID = State()
+    UPDATE_PASSWORD_CHOICE = State()
     UPDATE_PASSWORD_SERVICE = State()
     UPDATE_PASSWORD_LOGIN = State()
     UPDATE_PASSWORD_PASSWORD = State()
