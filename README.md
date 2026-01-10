@@ -1,82 +1,83 @@
-# Password Manager Bot 🔐
+🔐 Password Manager Bot
 
-Telegram-bot for secure password management with encryption.
+Telegram-бот для безопасного хранения и управления паролями с шифрованием.
 
-## Quick Start
+🚀 Быстрый старт
+Требования
 
-### Prerequisites
-- Python 3.10+
-- Telegram Bot Token
+Python 3.10+
 
-### Installation
+Telegram Bot Token
 
-```bash
+Установка
+git clone <repository-url>
+cd passwordmanager
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-```
 
-### Configuration
+Конфигурация
 
-1. Copy `.env.example` to `.env`:
-```bash
+Скопируйте и настройте .env:
+
 cp .env.example .env
-```
 
-2. Add your Telegram Bot Token to `.env`:
-```env
+
+Добавьте токен:
+
 TELEGRAM_BOT_TOKEN=your_token_here
-```
 
-### Running
+Запуск
+python main.py
 
-```bash
-python3 main.py
-```
+✨ Функции
 
-## Features
+📝 Регистрация и безопасный вход
 
-✅ User registration with encrypted passwords  
-✅ Secure login system  
-✅ Add, view, update, and delete passwords  
-✅ AES-128 encryption with PBKDF2-HMAC-SHA256  
-✅ Session management  
-✅ Input validation  
+➕ Добавление, 👁️ просмотр, ✏️ обновление и 🗑️ удаление паролей
 
-## Project Structure
+🔐 AES-128 шифрование с уникальной солью
 
-```
-├── main.py                 # Entry point
-├── config.py               # Configuration
-├── requirements.txt        # Dependencies
-├── .env                    # Environment variables (create from .env.example)
-├── .env.example            # Environment template
-├── src/
-│   ├── bot/               # Telegram bot handlers
-│   ├── database/          # Database layer
-│   ├── security/          # Encryption & validation
-│   └── services/          # Business logic
-├── tests/                 # Unit tests
-├── data/                  # Data directory
-└── .github/workflows/     # CI/CD pipelines
-```
+🔑 PBKDF2-HMAC-SHA256 для ключей
 
-## Security
+🚪 Выход из аккаунта
 
-🔒 All passwords encrypted with Fernet (AES-128)  
-🔒 Master password-based key derivation  
-🔒 Unique salt for each password  
-🔒 PBKDF2 with 100,000 iterations  
+🗂️ Структура проекта
+main.py
+config.py
+requirements.txt
+.env / .env.example
+src/
+├─ bot/           # Telegram-бот
+├─ database/      # Модели и CRUD
+├─ security/      # Шифрование
+├─ services/      # Логика
+└─ utils.py
+tests/            # Тесты
+.github/workflows/ # CI/CD
 
-## Documentation
+🛢️ База данных
 
-See `docs_and_info/` folder for detailed documentation including:
-- Architecture guide
-- Project status
-- Fixes applied
+users: id, username, password, created_at, updated_at
+passwords: id, user_id, service, login, password, created_at, updated_at
 
-## CI/CD
+🔒 Безопасность
 
-Automated testing and security checks on every push via GitHub Actions.
+Все пароли зашифрованы AES-128
 
----
+Уникальная соль для каждого пароля
 
-For more information, see documentation in `docs_and_info/` folder.
+Ключ генерируется через PBKDF2-HMAC-SHA256 (100 000 итераций)
+
+🧪 Разработка
+pip install -r requirements-dev.txt
+pytest tests/ -v
+black src/ tests/
+flake8 src/ tests/
+mypy src/
+
+🔄 CI/CD
+
+Автотесты на Python 3.9–3.12
+
+Линтинг, проверка типов и покрытие кода через GitHub Actions
