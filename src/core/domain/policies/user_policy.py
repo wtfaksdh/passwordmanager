@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
-from entities.user import User
+from core.domain.entities.user import User
 
 
 class UserPolicy:

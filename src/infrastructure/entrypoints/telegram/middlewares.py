@@ -6,8 +6,8 @@ from bootstrap.wiring import Container
 class AuthMiddleware(BaseMiddleware):
 
     @inject
-    def __init__(self, user_repo = Provide[Container.password_repository]):
-        # Используем password_repository как пример, можно заменить на UserRepository
+    def __init__(self, user_repo = Provide[Container.user_repository]):
+        # Use the user_repository to check if user is registered
         self.user_repo = user_repo
         super().__init__()
 

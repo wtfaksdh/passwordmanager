@@ -2,10 +2,25 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List
 import re
-from core.domain import PasswordEntry, Category, EncryptedPassword, PasswordStrength, PasswordPolicy, UserPolicy, CipherType, Email, URL
-from core.ports import PasswordRepository, EncryptionService, KeyStoreService, KeyDerivationService, UserRepository
-from core.domain import PasswordNotFoundError, UnauthorizedError, WeakPasswordError
-from core.application import UserContext, PasswordInput, PasswordOutput
+from core.domain.entities.password_entry import PasswordEntry
+from core.domain.entities.user import User
+from core.domain.value_objects.encrypted_password import EncryptedPassword
+from core.ports.encryption import EncryptionService
+from core.ports.key_store import KeyStoreService
+from core.ports.key_derivation import KeyDerivationService
+from core.ports.repositories import PasswordRepository, UserRepository
+from core.domain.exceptions.password_not_found import PasswordNotFoundError
+from core.domain.exceptions.unauthorized import UnauthorizedError
+from core.domain.exceptions.weak_password import WeakPasswordError
+from core.domain.value_objects.url import URL
+from core.domain.value_objects.email import Email
+from core.domain.enums.category import Category
+from core.domain.enums.cipher_type import CipherType
+from core.application.dto.password_input import PasswordInput
+from core.application.dto.password_output import PasswordOutput
+from core.application.dto.user_context import UserContext
+from core.domain.policies.password_policy import PasswordPolicy
+from core.domain.policies.user_policy import UserPolicy
 
 class CreatePassword:
     def __init__(self, password_repo: PasswordRepository, user_repo: UserRepository,

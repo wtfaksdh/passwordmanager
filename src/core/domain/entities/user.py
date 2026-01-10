@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 import re
-from value_objects import Email
+from core.domain.value_objects.email import Email
 
 
 @dataclass

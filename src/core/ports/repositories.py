@@ -1,7 +1,10 @@
 from __future__ import annotations
 from typing import List
 from abc import ABC, abstractmethod
-from core.domain import PasswordEntry, User, EncryptedPassword, CipherType
+from core.domain.entities.password_entry import PasswordEntry
+from core.domain.entities.user import User
+from core.domain.value_objects.encrypted_password import EncryptedPassword
+from core.domain.enums.cipher_type import CipherType
 
 class PasswordRepository(ABC):
     @abstractmethod
@@ -29,4 +32,6 @@ class UserRepository(ABC):
         raise NotImplementedError
     @abstractmethod
     def create_user(self, user: User) -> None:
+        raise NotImplementedError    @abstractmethod
+    def exists(self, user_id: int) -> bool:
         raise NotImplementedError

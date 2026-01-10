@@ -1,11 +1,27 @@
 import sqlite3
 from typing import List
-from core.domain import PasswordEntry, User, EncryptedPassword, CipherType, Email, URL, Category, UserPolicy
-from core.ports import PasswordRepository, UserRepository
-from core.ports import EncryptionService, KeyDerivationService, KeyStoreService
+from pathlib import Path
+from core.domain.entities.password_entry import PasswordEntry
+from core.ports.repositories import PasswordRepository, UserRepository
+from core.ports.encryption import EncryptionService
+from core.ports.key_derivation import KeyDerivationService
+from core.ports.key_store import KeyStoreService
+from core.domain.entities.user import User
+from core.domain.value_objects.encrypted_password import EncryptedPassword
+from core.domain.value_objects.email import Email
+from core.domain.enums.cipher_type import CipherType
+from core.domain.enums.category import Category
+from core.domain.value_objects.url import URL
+from core.domain.policies.user_policy import UserPolicy
+from core.domain.policies.password_policy import PasswordPolicy
+
 
 class SQLitePasswordRepository(PasswordRepository):
     def __init__(self, db_path: str):
+        # Ensure directory exists
+        db_file = Path(db_path)
+        db_file.parent.mkdir(parents=True, exist_ok=True)
+        
         self.conn = sqlite3.connect(db_path)
         self.conn.execute("""
         CREATE TABLE IF NOT EXISTS passwords (
@@ -68,8 +84,13 @@ class SQLitePasswordRepository(PasswordRepository):
             entries.append(PasswordEntry(id=id_, user_id=user_id, name=name, category=Category(category), url=URL(url), encrypted_password=encrypted))
         return entries
 
+
 class SQLiteUserRepository(UserRepository):
     def __init__(self, db_path: str):
+        # Ensure directory exists
+        db_file = Path(db_path)
+        db_file.parent.mkdir(parents=True, exist_ok=True)
+        
         self.conn = sqlite3.connect(db_path)
         self.conn.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -107,5 +128,9 @@ class SQLiteUserRepository(UserRepository):
             "INSERT INTO users (username, email, password_hash, salt) VALUES (?, ?, ?, ?)",
             (user.username, user.email.address, user.password_hash, user.salt)
         )
-        user.id = cursor.lastrowid
         self.conn.commit()
+
+    def exists(self, user_id: int) -> bool:
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT 1 FROM users WHERE id = ? LIMIT 1", (user_id,))
+        return cursor.fetchone() is not None

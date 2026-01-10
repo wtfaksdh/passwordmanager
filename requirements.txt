@@ -1,7 +1,26 @@
-aiogram>=3.1.0,<3.25
-python-dotenv
-dependency-injector
-pydantic>=2.4,<2.13
-cryptography
-aiohttp~=3.8.6
-aiofiles~=23.1.0
+# Telegram bot framework
+aiogram==3.24.0
+
+# Асинхронные HTTP-запросы
+aiohttp==3.13.3       # последняя доступная версия <3.14
+aiofiles==23.2.1      # >=23.2.1, совместимо с aiogram
+
+# Загрузка переменных окружения из .env
+python-dotenv==1.2.1
+
+# Инъекция зависимостей
+dependency-injector==4.48.3
+
+# Работа с данными и валидация
+pydantic==2.9.2
+pydantic-settings==2.12.0
+typing-extensions>=4.12.0
+
+# Криптография (для хранения паролей или шифрования)
+cryptography==45.0.7
+
+# Дополнительно для фильтров aiogram
+magic-filter==1.0.12
+
+# Безопасное хранение паролей
+keyring==24.2.0

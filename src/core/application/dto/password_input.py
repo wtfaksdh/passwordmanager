@@ -2,9 +2,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List
 import re
-from core.domain import PasswordEntry, Category, EncryptedPassword, PasswordStrength, PasswordPolicy, UserPolicy, CipherType, Email, URL
-from core.ports import PasswordRepository, EncryptionService, KeyStoreService, KeyDerivationService, UserRepository
-from core.domain import PasswordNotFoundError, UnauthorizedError, WeakPasswordError
+from core.domain.enums.cipher_type import CipherType
+from core.domain.value_objects.url import URL
+from core.domain.entities.password_entry import Category
 
 @dataclass
 class PasswordInput:

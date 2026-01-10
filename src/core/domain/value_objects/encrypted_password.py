@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 import re
-from enums import CipherType
+from core.domain.enums.cipher_type import CipherType
 
 @dataclass
 class EncryptedPassword:

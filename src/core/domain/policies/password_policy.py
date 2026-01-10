@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 import re
-from exceptions import WeakPasswordError
+from core.domain.exceptions.weak_password import WeakPasswordError
 
 class PasswordPolicy:
     MIN_LENGTH = 8

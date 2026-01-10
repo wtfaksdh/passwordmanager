@@ -2,10 +2,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List
 import re
-from core.domain import PasswordEntry, Category, EncryptedPassword, PasswordStrength, PasswordPolicy, UserPolicy, CipherType, Email, URL
-from core.ports import PasswordRepository, EncryptionService, KeyStoreService, KeyDerivationService, UserRepository
-from core.domain import PasswordNotFoundError, UnauthorizedError, WeakPasswordError
-from core.application import UserContext, PasswordInput, PasswordOutput
+from core.ports.repositories import PasswordRepository
+from core.ports.key_store import KeyStoreService
+from core.ports.encryption import EncryptionService
+from core.application.dto.user_context import UserContext
+from core.application.dto.password_output import PasswordOutput
+from core.domain.exceptions.unauthorized import UnauthorizedError
 
 class ListPasswords:
     def __init__(self, password_repo: PasswordRepository, key_store: KeyStoreService, encryption_service: EncryptionService):
