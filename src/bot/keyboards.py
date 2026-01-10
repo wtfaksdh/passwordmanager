@@ -1,65 +1,61 @@
-"""Keyboards for Telegram Bot"""
+"""Keyboard builders for Telegram Bot"""
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
-from src.config import *
+from config import BTN_REGISTER, BTN_LOGIN, BTN_ADD, BTN_VIEW, BTN_UPDATE, BTN_DELETE, BTN_BACK, BTN_CANCEL, BTN_CONFIRM
 
 
 def get_auth_keyboard() -> ReplyKeyboardMarkup:
     """Get authentication menu keyboard"""
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text=BTN_REGISTER), KeyboardButton(text=BTN_LOGIN)],
-        ],
-        resize_keyboard=True,
-        one_time_keyboard=True,
-    )
-    return keyboard
+    keyboard = [
+        [KeyboardButton(text=BTN_REGISTER)],
+        [KeyboardButton(text=BTN_LOGIN)],
+    ]
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
 
 def get_main_menu_keyboard() -> ReplyKeyboardMarkup:
     """Get main menu keyboard"""
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text=BTN_ADD_PASSWORD)],
-            [KeyboardButton(text=BTN_VIEW_PASSWORDS)],
-            [KeyboardButton(text=BTN_DELETE_PASSWORD)],
-            [KeyboardButton(text=BTN_UPDATE_PASSWORD)],
-            [KeyboardButton(text=BTN_LOGOUT)],
-        ],
-        resize_keyboard=True,
-    )
-    return keyboard
+    keyboard = [
+        [KeyboardButton(text=BTN_ADD), KeyboardButton(text=BTN_VIEW)],
+        [KeyboardButton(text=BTN_UPDATE), KeyboardButton(text=BTN_DELETE)],
+    ]
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
 
 def get_cancel_keyboard() -> ReplyKeyboardMarkup:
-    """Get cancel keyboard"""
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text=BTN_CANCEL)],
-        ],
-        resize_keyboard=True,
-        one_time_keyboard=True,
-    )
-    return keyboard
+    """Get cancel button keyboard"""
+    keyboard = [[KeyboardButton(text=BTN_CANCEL)]]
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+
+
+def get_back_keyboard() -> ReplyKeyboardMarkup:
+    """Get back button keyboard"""
+    keyboard = [[KeyboardButton(text=BTN_BACK)]]
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
 
 def get_confirm_keyboard() -> ReplyKeyboardMarkup:
-    """Get confirm keyboard"""
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text=BTN_CONFIRM), KeyboardButton(text=BTN_CANCEL)],
-        ],
-        resize_keyboard=True,
-        one_time_keyboard=True,
-    )
-    return keyboard
+    """Get confirm/cancel keyboard"""
+    keyboard = [
+        [KeyboardButton(text=BTN_CONFIRM), KeyboardButton(text=BTN_CANCEL)],
+    ]
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
 
-def get_passwords_inline_keyboard(password_ids: list[int], password_data: list[tuple]) -> InlineKeyboardMarkup:
-    """Get inline keyboard for password selection"""
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text=f"{data[0]} ({data[1]})", callback_data=f"pass_{pwd_id}")]
-            for pwd_id, data in zip(password_ids, password_data)
-        ]
-    )
-    return keyboard
+def get_passwords_inline_keyboard(passwords: list) -> InlineKeyboardMarkup:
+    """
+    Get inline keyboard for password selection.
+    
+    Args:
+        passwords: List of password records
+        
+    Returns:
+        InlineKeyboardMarkup with password options
+    """
+    keyboard = []
+    for pwd in passwords:
+        callback_data = f"pwd_{pwd['id']}"
+        button_text = f"🔐 {pwd['service']} ({pwd['login']})"
+        keyboard.append(
+            [InlineKeyboardButton(text=button_text, callback_data=callback_data)]
+        )
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)

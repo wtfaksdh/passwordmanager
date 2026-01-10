@@ -1,15 +1,15 @@
-"""Database models for Password Manager"""
-from dataclasses import dataclass
+"""Database models"""
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
 
 
 @dataclass
 class User:
-    """User model"""
+    """User model with encrypted password"""
     id: Optional[int] = None
     username: str = ""
-    password: str = ""
+    password_hash: str = ""  # Encrypted password hash
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
@@ -22,12 +22,12 @@ class User:
 
 @dataclass
 class Password:
-    """Password record model"""
+    """Password record model with encryption"""
     id: Optional[int] = None
     user_id: int = 0
     service: str = ""
     login: str = ""
-    password: str = ""
+    password: str = ""  # Encrypted password
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

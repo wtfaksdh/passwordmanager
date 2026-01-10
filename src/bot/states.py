@@ -3,7 +3,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 
 class AuthStates(StatesGroup):
-    """Authentication states"""
+    """Authentication process states"""
     START = State()
     REGISTER = State()
     REGISTER_USERNAME = State()
@@ -23,5 +23,7 @@ class MainMenuStates(StatesGroup):
     VIEW_PASSWORDS = State()
     DELETE_PASSWORD = State()
     UPDATE_PASSWORD = State()
+    UPDATE_PASSWORD_ID = State()
+    UPDATE_PASSWORD_SERVICE = State()
     UPDATE_PASSWORD_LOGIN = State()
     UPDATE_PASSWORD_PASSWORD = State()

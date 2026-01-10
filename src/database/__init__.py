@@ -1,5 +1,13 @@
-"""Database module for Password Manager"""
-from .db import Database, init_db
-from .models import User, Password
+"""Database package initialization"""
+from src.database.db import Database, DatabaseInitializer
+from src.database.models import User, Password
+from src.database.crud import UserRepository, PasswordRepository
 
-__all__ = ["Database", "init_db", "User", "Password"]
+__all__ = [
+    "Database",
+    "DatabaseInitializer",
+    "User",
+    "Password",
+    "UserRepository",
+    "PasswordRepository",
+]
