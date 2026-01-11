@@ -14,10 +14,8 @@ from src.bot.keyboards import (
 from src import Database, AuthenticationService, Validators
 from config import DB_PATH
 
-# Router for authentication commands
 router = Router()
 
-# Store active user sessions
 user_sessions = {}
 
 
@@ -26,15 +24,14 @@ async def cmd_start(message: Message, state: FSMContext):
     """Handle /start command"""
     user_id = message.from_user.id
     
-    # Clear previous state
     await state.clear()
     
     if user_id in user_sessions:
-        # User already authenticated
+
         await message.answer(MAIN_MENU_MESSAGE, reply_markup=get_main_menu_keyboard())
         await state.set_state(MainMenuStates.MENU)
     else:
-        # Show welcome and auth options
+
         await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
         await state.set_state(AuthStates.START)
 
@@ -52,21 +49,20 @@ async def register_start(message: Message, state: FSMContext):
 @router.message(AuthStates.REGISTER_USERNAME)
 async def register_username(message: Message, state: FSMContext):
     """Handle username input during registration"""
-    # Check for cancel button
+
     if message.text == BTN_CANCEL:
         await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
         await state.set_state(AuthStates.START)
         return
     
     username = message.text.strip()
-    
-    # Validate username
+
     is_valid, error_msg = Validators.validate_username(username)
     if not is_valid:
         await message.answer(error_msg)
         return
     
-    # Check if user exists
+
     db = Database(DB_PATH)
     db.connect()
     
@@ -91,7 +87,7 @@ async def register_username(message: Message, state: FSMContext):
 @router.message(AuthStates.REGISTER_PASSWORD)
 async def register_password(message: Message, state: FSMContext):
     """Handle password input during registration"""
-    # Check for cancel button
+
     if message.text == BTN_CANCEL:
         await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
         await state.clear()
@@ -100,17 +96,14 @@ async def register_password(message: Message, state: FSMContext):
     
     password = message.text.strip()
     
-    # Validate password
     is_valid, error_msg = Validators.validate_password(password)
     if not is_valid:
         await message.answer(error_msg)
         return
     
-    # Get username from state
     data = await state.get_data()
     username = data.get("username")
-    
-    # Register user
+
     db = Database(DB_PATH)
     db.connect()
     
@@ -118,7 +111,7 @@ async def register_password(message: Message, state: FSMContext):
     db.close()
     
     if success:
-        # Get newly created user ID
+
         db = Database(DB_PATH)
         db.connect()
         from src.database.crud import UserRepository
@@ -150,7 +143,7 @@ async def login_start(message: Message, state: FSMContext):
 @router.message(AuthStates.LOGIN_USERNAME)
 async def login_username(message: Message, state: FSMContext):
     """Handle username input during login"""
-    # Check for cancel button
+
     if message.text == BTN_CANCEL:
         await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
         await state.set_state(AuthStates.START)
@@ -169,7 +162,7 @@ async def login_username(message: Message, state: FSMContext):
 @router.message(AuthStates.LOGIN_PASSWORD)
 async def login_password(message: Message, state: FSMContext):
     """Handle password input during login"""
-    # Check for cancel button
+
     if message.text == BTN_CANCEL:
         await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
         await state.clear()
@@ -178,11 +171,9 @@ async def login_password(message: Message, state: FSMContext):
     
     password = message.text.strip()
     
-    # Get username from state
     data = await state.get_data()
     username = data.get("username")
     
-    # Authenticate user
     db = Database(DB_PATH)
     db.connect()
     
