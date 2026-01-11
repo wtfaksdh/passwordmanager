@@ -14,10 +14,10 @@ class TestValidators:
 
     def test_is_valid_username_fail(self):
         """Test invalid usernames"""
-        assert is_valid_username("ab") is False  # Too short
-        assert is_valid_username("") is False  # Empty
-        assert is_valid_username("user@name") is False  # Invalid characters
-        assert is_valid_username("user name") is False  # Space
+        assert is_valid_username("ab") is False 
+        assert is_valid_username("") is False 
+        assert is_valid_username("user@name") is False 
+        assert is_valid_username("user name") is False 
 
     def test_is_valid_password_success(self):
         """Test valid passwords"""
@@ -26,8 +26,8 @@ class TestValidators:
 
     def test_is_valid_password_fail(self):
         """Test invalid passwords"""
-        assert is_valid_password("") is False  # Empty
-        assert is_valid_password("abc") is False  # Too short
+        assert is_valid_password("") is False 
+        assert is_valid_password("abc") is False 
 
     def test_is_valid_email_success(self):
         """Test valid emails"""
