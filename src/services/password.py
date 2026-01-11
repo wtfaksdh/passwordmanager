@@ -6,7 +6,6 @@ from src.database.models import Password
 from src.database.crud import PasswordRepository
 from src.security import EncryptionService
 
-
 class PasswordService:
     """Service for managing encrypted passwords"""
 
