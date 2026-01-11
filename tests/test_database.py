@@ -154,8 +154,7 @@ class TestPasswordRepository:
             password="secret123"
         )
         pwd_id = PasswordRepository.create(db_connection, password)
-
-        # Update password
+        
         updated_password = Password(
             id=pwd_id,
             user_id=user_id,
