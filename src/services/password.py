@@ -120,12 +120,12 @@ class PasswordService:
             Tuple of (success: bool, message: str)
         """
         try:
-            # Encrypt new password
+           
             encrypted_password = EncryptionService.encrypt_password(
                 new_password, master_password
             )
             
-            # Update password record
+           
             pwd = Password(
                 id=password_id,
                 service=service,
