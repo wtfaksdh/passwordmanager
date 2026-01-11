@@ -21,7 +21,6 @@ from config import DB_PATH
 
 router = Router()
 
-# Dictionary to store active user sessions
 user_sessions = {}
 
 
@@ -79,7 +78,6 @@ async def register_password(message: Message, state: FSMContext):
     data = await state.get_data()
     username = data.get("username")
 
-    # Encrypt the password
     encrypted_password = EncryptionService.encrypt_password(password, password)
     user = User(username=username, password_hash=encrypted_password)
     db = Database(DB_PATH)
@@ -124,7 +122,6 @@ async def login_password(message: Message, state: FSMContext):
     user = UserRepository.get_by_username(db, username)
     db.disconnect()
     
-    # Verify password
     user_found = None
     if user:
         try:
@@ -192,7 +189,6 @@ async def save_password(message: Message, state: FSMContext):
         await state.set_state(AuthStates.START)
         return
 
-    # Get user's master password hash for encryption
     db = Database(DB_PATH)
     db.connect()
     user = UserRepository.get_by_id(db, user_id)
@@ -203,7 +199,6 @@ async def save_password(message: Message, state: FSMContext):
         await state.set_state(AuthStates.START)
         return
     
-    # Encrypt password with salt from user's password hash
     encrypted_pwd = EncryptionService.encrypt_password(password, user.password_hash.split(':')[0])
     pwd_obj = Password(
         user_id=user_id,
@@ -402,7 +397,6 @@ async def update_password_select(callback: CallbackQuery, state: FSMContext):
             reply_markup=get_cancel_keyboard(),
             parse_mode="HTML"
         )
-        # Wait for user choice (1 or 2) in UPDATE_PASSWORD state
         await state.set_state(MainMenuStates.UPDATE_PASSWORD)
     else:
         await callback.message.answer("Пароль не найден.", reply_markup=get_main_menu_keyboard())
@@ -427,10 +421,8 @@ async def cancel_operation(message: Message, state: FSMContext):
     """Cancel operation"""
     user_id = message.from_user.id
 
-    # Determine current FSM state
     current_state = await state.get_state()
 
-    # Clear FSM state and any stored data
     try:
         await state.clear()
     except Exception:
@@ -439,24 +431,19 @@ async def cancel_operation(message: Message, state: FSMContext):
         except Exception:
             pass
 
-    # If user was in registration/login flow -> return to auth start
     if current_state and ("REGISTER" in current_state or "LOGIN" in current_state):
         await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
         await state.set_state(AuthStates.START)
         return
 
-    # If user already has an active session, go to main menu
     if user_id in user_sessions:
         await message.answer(MAIN_MENU, reply_markup=get_main_menu_keyboard())
         await state.set_state(MainMenuStates.MENU)
         return
 
-    # Default: send auth start
     await message.answer(WELCOME_MESSAGE, reply_markup=get_auth_keyboard())
     await state.set_state(AuthStates.START)
 
-
-# Handle user's choice after selecting which field to update
 @router.message(MainMenuStates.UPDATE_PASSWORD)
 async def update_password_choice(message: Message, state: FSMContext):
     """Handle choice: update login or password"""
@@ -496,8 +483,7 @@ async def update_password_login(message: Message, state: FSMContext):
         await message.answer("Ошибка: пароль не найден.", reply_markup=get_main_menu_keyboard())
         await state.set_state(MainMenuStates.MENU)
         return
-    
-    # Create updated password object
+
     pwd.login = new_login
     db = Database(DB_PATH)
     db.connect()
@@ -534,8 +520,7 @@ async def update_password_password(message: Message, state: FSMContext):
         await message.answer("Ошибка: пароль или пользователь не найден.", reply_markup=get_main_menu_keyboard())
         await state.set_state(MainMenuStates.MENU)
         return
-    
-    # Encrypt and update password
+
     encrypted_pwd = EncryptionService.encrypt_password(new_password, user.password_hash.split(':')[0])
     pwd.password = encrypted_pwd
     db = Database(DB_PATH)
