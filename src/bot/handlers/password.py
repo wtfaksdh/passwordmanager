@@ -17,7 +17,6 @@ from src.database.models import Password
 from config import DB_PATH
 from src.bot.handlers.auth import user_sessions
 
-# Router for password management
 router = Router()
 
 
@@ -35,8 +34,7 @@ async def add_password_start(message: Message, state: FSMContext):
 async def add_password_service(message: Message, state: FSMContext):
     """Handle service name input"""
     service = message.text.strip()
-    
-    # Validate service name
+
     is_valid, error_msg = Validators.validate_service(service)
     if not is_valid:
         await message.answer(error_msg)
@@ -54,8 +52,7 @@ async def add_password_service(message: Message, state: FSMContext):
 async def add_password_login(message: Message, state: FSMContext):
     """Handle login input"""
     login = message.text.strip()
-    
-    # Validate login
+
     is_valid, error_msg = Validators.validate_login(login)
     if not is_valid:
         await message.answer(error_msg)
@@ -74,24 +71,22 @@ async def add_password_password(message: Message, state: FSMContext):
     """Handle password input"""
     password = message.text.strip()
     
-    # Validate password
+
     is_valid, error_msg = Validators.validate_password(password)
     if not is_valid:
         await message.answer(error_msg)
         return
     
-    # Get data
     data = await state.get_data()
     service = data.get("service")
     login = data.get("login")
     
-    # Get user ID and master password
+
     user_id = user_sessions.get(message.from_user.id)
     if not user_id:
         await message.answer("❌ Ошибка: пользователь не авторизован")
         return
     
-    # Get user's master password (their login password)
     from src.database.crud import UserRepository
     db = Database(DB_PATH)
     db.connect()
@@ -101,8 +96,7 @@ async def add_password_password(message: Message, state: FSMContext):
     if not user:
         await message.answer("❌ Ошибка: пользователь не найден")
         return
-    
-    # Add password
+
     db = Database(DB_PATH)
     db.connect()
     
@@ -112,7 +106,7 @@ async def add_password_password(message: Message, state: FSMContext):
         service,
         login,
         password,
-        user.username,  # Use username as master password for encryption
+        user.username,  
     )
     db.close()
     
@@ -135,7 +129,7 @@ async def view_passwords(message: Message, state: FSMContext):
         await message.answer("❌ Ошибка: пользователь не авторизован")
         return
     
-    # Get user's master password
+
     from src.database.crud import UserRepository
     db = Database(DB_PATH)
     db.connect()
@@ -146,7 +140,7 @@ async def view_passwords(message: Message, state: FSMContext):
         db.close()
         return
     
-    # Get passwords
+
     success, passwords, msg = PasswordService.get_user_passwords(
         db, user_id, user.username
     )
@@ -165,7 +159,7 @@ async def view_passwords(message: Message, state: FSMContext):
         await state.set_state(MainMenuStates.MENU)
         return
     
-    # Show passwords
+
     message_text = "🔐 Ваши пароли:\n\n"
     for pwd in passwords:
         message_text += f"🔑 {pwd['service']}\n"
@@ -187,7 +181,6 @@ async def delete_password_start(message: Message, state: FSMContext):
         await message.answer("❌ Ошибка: пользователь не авторизован")
         return
     
-    # Get user's master password
     from src.database.crud import UserRepository
     db = Database(DB_PATH)
     db.connect()
@@ -198,7 +191,7 @@ async def delete_password_start(message: Message, state: FSMContext):
         db.close()
         return
     
-    # Get passwords
+
     success, passwords, msg = PasswordService.get_user_passwords(
         db, user_id, user.username
     )
@@ -212,7 +205,6 @@ async def delete_password_start(message: Message, state: FSMContext):
         await state.set_state(MainMenuStates.MENU)
         return
     
-    # Show password selection
     await message.answer(
         "Выберите пароль для удаления:",
         reply_markup=get_passwords_inline_keyboard(passwords),
@@ -227,8 +219,7 @@ async def update_password_start(message: Message, state: FSMContext):
     if not user_id:
         await message.answer("❌ Ошибка: пользователь не авторизован")
         return
-    
-    # Get user's master password
+
     from src.database.crud import UserRepository
     db = Database(DB_PATH)
     db.connect()
@@ -238,8 +229,7 @@ async def update_password_start(message: Message, state: FSMContext):
         await message.answer("❌ Ошибка: пользователь не найден")
         db.close()
         return
-    
-    # Get passwords
+
     success, passwords, msg = PasswordService.get_user_passwords(
         db, user_id, user.username
     )
@@ -253,7 +243,6 @@ async def update_password_start(message: Message, state: FSMContext):
         await state.set_state(MainMenuStates.MENU)
         return
     
-    # Show password selection
     await message.answer(
         "Выберите пароль для обновления:",
         reply_markup=get_passwords_inline_keyboard(passwords),
@@ -271,7 +260,6 @@ async def back_handler(message: Message, state: FSMContext):
 @router.message(MainMenuStates.DELETE_PASSWORD)
 async def delete_password_handler(message: Message, state: FSMContext):
     """Handle password deletion after selection"""
-    # This is for text messages - but we use callback instead
     await message.answer("❌ Пожалуйста, выберите пароль из кнопок выше")
 
 
@@ -302,7 +290,6 @@ async def delete_password_callback(callback: CallbackQuery, state: FSMContext):
 @router.message(MainMenuStates.UPDATE_PASSWORD_ID)
 async def update_password_id_handler(message: Message, state: FSMContext):
     """Handle password ID selection for update"""
-    # This is for text messages - but we use callback instead
     await message.answer("❌ Пожалуйста, выберите пароль из кнопок выше")
 
 
@@ -315,8 +302,7 @@ async def update_password_id_callback(callback: CallbackQuery, state: FSMContext
         await callback.message.answer("❌ Ошибка: неверный формат")
         await callback.answer()
         return
-    
-    # Get the password
+
     db = Database(DB_PATH)
     db.connect()
     password = PasswordRepository.get_by_id(db, password_id)
@@ -418,8 +404,7 @@ async def update_password_password_handler(message: Message, state: FSMContext):
         return
     
     from src.security import EncryptionService
-    
-    # Encrypt new password
+
     encrypted_pwd = EncryptionService.encrypt_password(new_password, user.username)
     password.password = encrypted_pwd
     
