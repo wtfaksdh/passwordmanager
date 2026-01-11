@@ -18,7 +18,6 @@ router = Router()
 
 user_sessions = {}
 
-
 @router.message(Command("start"))
 async def cmd_start(message: Message, state: FSMContext):
     """Handle /start command"""
