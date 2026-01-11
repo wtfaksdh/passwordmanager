@@ -290,6 +290,5 @@ class PasswordRepository:
             print(f"Database error deleting user passwords: {e}")
             return False
 
-# Aliases for backward compatibility
 UserCRUD = UserRepository
 PasswordCRUD = PasswordRepository
