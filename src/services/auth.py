@@ -21,18 +21,18 @@ class AuthenticationService:
         Returns:
             Tuple of (success: bool, message: str)
         """
-        # Check if user exists
+      
         existing_user = UserRepository.get_by_username(db, username)
         if existing_user:
             return False, "Пользователь с таким именем уже существует"
         
-        # Encrypt password
+       
         try:
             password_hash = EncryptionService.encrypt_password(password, username)
         except Exception as e:
             return False, f"Ошибка при шифровании пароля: {str(e)}"
         
-        # Create user
+       
         user = User(username=username, password_hash=password_hash)
         user_id = UserRepository.create(db, user)
         
@@ -54,12 +54,12 @@ class AuthenticationService:
         Returns:
             Tuple of (success: bool, message: str, user_id: int)
         """
-        # Get user by username
+      
         user = UserRepository.get_by_username(db, username)
         if not user:
             return False, "Пользователь не найден", 0
         
-        # Verify password
+       
         try:
             decrypted_password = EncryptionService.decrypt_password(
                 user.password_hash, username
