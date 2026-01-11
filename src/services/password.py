@@ -34,12 +34,12 @@ class PasswordService:
             Tuple of (success: bool, message: str)
         """
         try:
-            # Encrypt password
+
             encrypted_password = EncryptionService.encrypt_password(
                 password, master_password
             )
             
-            # Create password record
+
             pwd = Password(
                 user_id=user_id,
                 service=service,
@@ -89,7 +89,7 @@ class PasswordService:
                         }
                     )
                 except Exception:
-                    # Skip passwords that can't be decrypted
+
                     continue
             
             return True, decrypted_passwords, ""
