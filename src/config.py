@@ -3,25 +3,22 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+
 load_dotenv()
 
-# Paths
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 DB_PATH = DATA_DIR / "passwords.db"
 
-# Ensure data directory exists
 DATA_DIR.mkdir(exist_ok=True)
 
-# Telegram Bot
+
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 
-# Database
+
 DATABASE_URL = f"sqlite:///{DB_PATH}"
 DATABASE_CHECK_SAME_THREAD = False
 
-# States
 class States:
     """User states for FSM (Finite State Machine)"""
     MAIN_MENU = "main_menu"
@@ -39,7 +36,6 @@ class States:
     DELETE_PASSWORD = "delete_password"
     UPDATE_PASSWORD = "update_password"
 
-# Messages
 WELCOME_MESSAGE = """Добро пожаловать в Password Manager! 🔐
 
 Управляйте своими паролями безопасно в Telegram."""
@@ -53,7 +49,6 @@ ERROR_USER_EXISTS = "Пользователь с таким именем уже 
 ERROR_INVALID_CREDENTIALS = "Неверное имя пользователя или пароль!"
 ERROR_USER_NOT_FOUND = "Пользователь не найден!"
 
-# Buttons
 BTN_REGISTER = "📝 Регистрация"
 BTN_LOGIN = "🔑 Вход"
 BTN_BACK = "⬅️ Назад"
