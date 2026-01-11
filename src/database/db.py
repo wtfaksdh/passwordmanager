@@ -59,7 +59,6 @@ class DatabaseInitializer:
         db.connect()
 
         try:
-            # Create users table with encrypted password storage
             db.execute(
                 """
                 CREATE TABLE IF NOT EXISTS users (
@@ -72,7 +71,6 @@ class DatabaseInitializer:
                 """
             )
 
-            # Create passwords table with encryption
             db.execute(
                 """
                 CREATE TABLE IF NOT EXISTS passwords (
@@ -88,7 +86,6 @@ class DatabaseInitializer:
                 """
             )
 
-            # Create indexes for faster lookups
             db.execute(
                 """
                 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)
