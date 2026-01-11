@@ -19,7 +19,6 @@ from src.bot.handlers.auth import user_sessions
 
 router = Router()
 
-
 @router.message(MainMenuStates.MENU, F.text == BTN_ADD)
 async def add_password_start(message: Message, state: FSMContext):
     """Start adding new password"""
