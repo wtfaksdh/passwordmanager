@@ -7,7 +7,6 @@ def is_valid_username(username: str) -> bool:
     """Validate username format"""
     if not username or len(username) < 3 or len(username) > 30:
         return False
-    # Allow letters, numbers, underscores
     return bool(re.match(r"^[a-zA-Z0-9_]+$", username))
 
 
