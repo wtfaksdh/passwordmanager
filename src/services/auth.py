@@ -4,7 +4,6 @@ from src.database.models import User
 from src.database.crud import UserRepository
 from src.security import EncryptionService
 
-
 class AuthenticationService:
     """Service for user authentication with encrypted passwords"""
 
