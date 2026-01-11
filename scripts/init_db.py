@@ -1,9 +1,9 @@
-#!/usr/bin/env python3
+
 """Initialize password manager database"""
 import sys
 from pathlib import Path
 
-# Add parent directory to path
+
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.database.db import init_db
