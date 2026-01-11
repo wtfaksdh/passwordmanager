@@ -45,17 +45,14 @@ class EncryptionService:
         Returns:
             Encrypted password with salt (format: salt:encrypted)
         """
-        # Generate random salt
+
         salt = os.urandom(EncryptionService.SALT_LENGTH)
         
-        # Derive key from master password
         key = EncryptionService.derive_key(master_password, salt)
         
-        # Encrypt password
         cipher = Fernet(key)
         encrypted = cipher.encrypt(password.encode())
         
-        # Return salt and encrypted password combined
         salt_b64 = base64.b64encode(salt).decode()
         encrypted_b64 = encrypted.decode()
         
@@ -77,20 +74,20 @@ class EncryptionService:
             ValueError: If decryption fails or data format is invalid
         """
         try:
-            # Split salt and encrypted password
+            
             parts = encrypted_data.split(":", 1)
             if len(parts) != 2:
                 raise ValueError("Invalid encrypted data format")
             
             salt_b64, encrypted_b64 = parts
             
-            # Decode salt
+
             salt = base64.b64decode(salt_b64)
             
-            # Derive key from master password
+   
             key = EncryptionService.derive_key(master_password, salt)
             
-            # Decrypt password
+
             cipher = Fernet(key)
             decrypted = cipher.decrypt(encrypted_b64.encode())
             
