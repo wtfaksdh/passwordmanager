@@ -9,7 +9,7 @@ class User:
     """User model with encrypted password"""
     id: Optional[int] = None
     username: str = ""
-    password_hash: str = ""  # Encrypted password hash
+    password_hash: str = ""
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
@@ -27,7 +27,7 @@ class Password:
     user_id: int = 0
     service: str = ""
     login: str = ""
-    password: str = ""  # Encrypted password
+    password: str = ""
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
