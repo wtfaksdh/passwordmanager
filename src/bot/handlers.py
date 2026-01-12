@@ -5,7 +5,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, StateFilter
 
 from src.config import *
-from src.bot.states import AuthStates, MainMenuStates
 from src.bot.keyboards import (
     get_auth_keyboard,
     get_main_menu_keyboard,
@@ -17,7 +16,6 @@ from src.database.db import Database
 from src.database.crud import UserRepository, PasswordRepository
 from src.database.models import Password, User
 from src.security.encryption import EncryptionService
-from config import DB_PATH
 
 router = Router()
 

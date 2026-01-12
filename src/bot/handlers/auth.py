@@ -4,7 +4,7 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, StateFilter
 
-from config import BTN_REGISTER, BTN_LOGIN, BTN_CANCEL, WELCOME_MESSAGE, MAIN_MENU_MESSAGE
+from src.config import BTN_REGISTER, BTN_LOGIN, BTN_CANCEL, WELCOME_MESSAGE, MAIN_MENU_MESSAGE, DB_PATH
 from src.bot.states import AuthStates, MainMenuStates
 from src.bot.keyboards import (
     get_auth_keyboard,
@@ -12,7 +12,6 @@ from src.bot.keyboards import (
     get_cancel_keyboard,
 )
 from src import Database, AuthenticationService, Validators
-from config import DB_PATH
 
 router = Router()
 

@@ -3,7 +3,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from config import BTN_ADD, BTN_VIEW, BTN_UPDATE, BTN_DELETE, BTN_BACK, MAIN_MENU_MESSAGE
+from src.config import BTN_ADD, BTN_VIEW, BTN_UPDATE, BTN_DELETE, BTN_BACK, MAIN_MENU_MESSAGE, DB_PATH
 from src.bot.states import MainMenuStates
 from src.bot.keyboards import (
     get_main_menu_keyboard,
@@ -14,7 +14,6 @@ from src.bot.keyboards import (
 from src import Database, PasswordService, Validators
 from src.database.crud import PasswordRepository
 from src.database.models import Password
-from config import DB_PATH
 from src.bot.handlers.auth import user_sessions
 
 router = Router()

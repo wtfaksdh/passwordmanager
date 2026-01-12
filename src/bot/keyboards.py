@@ -1,6 +1,6 @@
 """Keyboard builders for Telegram Bot"""
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
-from config import BTN_REGISTER, BTN_LOGIN, BTN_ADD, BTN_VIEW, BTN_UPDATE, BTN_DELETE, BTN_BACK, BTN_CANCEL, BTN_CONFIRM
+from src.config import BTN_REGISTER, BTN_LOGIN, BTN_ADD, BTN_VIEW, BTN_UPDATE, BTN_DELETE, BTN_BACK, BTN_CANCEL, BTN_CONFIRM
 
 
 def get_auth_keyboard() -> ReplyKeyboardMarkup:

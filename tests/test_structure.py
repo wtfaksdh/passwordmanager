@@ -83,7 +83,7 @@ def test_interface_imports():
 
 def test_config_imports():
     """Test configuration imports"""
-    from config import (
+    from src.config import (
         TELEGRAM_BOT_TOKEN,
         DB_PATH,
         LOG_LEVEL,

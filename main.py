@@ -9,8 +9,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from config import TELEGRAM_BOT_TOKEN, DB_PATH, LOG_LEVEL
-from src import DatabaseInitializer
+from src.config import TELEGRAM_BOT_TOKEN, DB_PATH, LOG_LEVEL
+from src.database.db import DatabaseInitializer
 from src.bot.handlers import init_routers
 
 logging.basicConfig(
